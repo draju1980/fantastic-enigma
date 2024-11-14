@@ -14,8 +14,8 @@ geth_p2p_udp_port: 30304
 geth_p2p_tcp_port: 30303
 
 opgeth_ports:
-  - "0.0.0.0:{{ geth_rpc_port }}:{{ geth_rpc_port }}"
-  - "0.0.0.0:{{ geth_wss_port }}:{{ geth_wss_port }}"
+  - "127.0.0.1:{{ geth_rpc_port }}:{{ geth_rpc_port }}"
+  - "127.0.0.1:{{ geth_wss_port }}:{{ geth_wss_port }}"
   - "127.0.0.1:{{ geth_l2_port }}:{{ geth_l2_port }}"
   - "127.0.0.1:{{ geth_metrics_port }}:{{ geth_metrics_port }}"  # curl http://localhost:1111/debug/metrics/prometheus
   - "0.0.0.0:{{ geth_p2p_udp_port }}:{{ geth_p2p_udp_port }}"
@@ -32,7 +32,7 @@ opnode_p2p_port: 9003
 opnode_metrics_port: 2222
 
 opnode_ports:
-  - "0.0.0.0:{{ opnode_rpc_port }}:{{ opnode_rpc_port }}"
+  - "127.0.0.1:{{ opnode_rpc_port }}:{{ opnode_rpc_port }}"
   - "127.0.0.1:{{ opnode_metrics_port }}:{{ opnode_metrics_port }}" # curl http://localhost:2222/metrics
   - "0.0.0.0:{{ opnode_p2p_port }}:{{ opnode_p2p_port }}"
 

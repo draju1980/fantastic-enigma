@@ -1,0 +1,40 @@
+name: Run Ansible Playbook
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - opstack/inventory/inventory.yml  # Trigger only when the correct inventory file changes
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ANSIBLE_VAULT: ${{ secrets.ANSIBLE_VAULT }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+          mkdir -p ~/.ansible  
+          echo "$ANSIBLE_VAULT" > ~/.ansible/vault-key.txt  
+          chmod 600 ~/.ansible/vault-key.txt 
+          cat ~/.ansible/vault-key.txt 
+
+      - name: Run Ansible Playbook
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: 'False'
+        run: |
+          ansible-playbook -i opstack/inventory/inventory.yml opstack/tasks/main.yml

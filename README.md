@@ -26,23 +26,26 @@ OP Stack benefits from Ethereum’s open-source community, fostering continuous 
 
 Here is an overview diagram of the Optimism blockchain environment:
 
-![alt text](image.png)
-
+![alt text](opstack.png)
 This diagram outlines the key components and their interactions within the Optimism blockchain setup. It includes core infrastructure, such as the backend and frontend applications integrated with Optimism’s Layer 2 blockchain and deployment layers. Each element highlights how the environment leverages Optimism’s scalability, Ethereum compatibility, and modularity to create a secure, efficient, and enterprise-ready dApp platform.
 
 ### 1. Architectural Overview Diagram
 
 The diagram includes the following high-level components and their interconnections:
 
-#### Frontend (UI): Interfaces with the backend API layer to interact with blockchain data.
-#### Backend (Node.js APIs): Manages business logic, authentication, and data handling for the dApp.
-#### Optimism Layer 2 Blockchain: Connects with Ethereum L1 as the security layer and includes modules for smart contracts, fraud proofs, and the rollup architecture.
+#### Frontend (UI): 
+*   Interfaces with the backend API layer to interact with blockchain data.
+
+#### Backend (Node.js APIs): 
+*   Manages business logic, authentication, and data handling for the dApp.
+
+#### Optimism Layer 2 Blockchain: 
+*   Connects with Ethereum L1 as the security layer and includes modules for smart contracts, fraud proofs, and the rollup architecture.
 
 ### Infrastructure Components:
-
 *   AWS Environment: Hosts the backend, frontend, and blockchain nodes.
 *   VPC, Subnets, Security Groups: Ensures network segmentation and access control.
-*   Observability Stack: Integrates Prometheus, Grafana, and ELK for real-time metrics, logging, and alerting.
+*   Observability Stack: Integrates Prometheus, Grafana, logging, and alerting.
 *   Automation Layer: Utilizes Terraform, Ansible, and CI/CD pipelines for IaC and streamlined deployments.
 
 ### 2. Security Threat Analysis
@@ -116,3 +119,30 @@ For a highly automated and scalable environment:
 *   Maintain regular security reviews and audit logging to ensure compliance.
 *   Use services (e.g., AWS CloudTrail) for audit trails to satisfy regulatory requirements.
 
+
+## Solution Overview: Terraform Deployment for Optimism OP Stack Node in AWS
+In this solution, I used Terraform to deploy an Optimism OP Stack demo node on AWS, adhering to best practices in infrastructure setup and security configuration. Key steps and considerations included:
+
+### 1. Infrastructure as Code (IaC) with Terraform:
+
+*   Utilized Terraform to define and provision all AWS resources, ensuring consistent, repeatable deployments.
+*   This IaC approach allows for easy scaling, modification, and version control of the entire infrastructure setup.
+
+### 2. Security Best Practices:
+
+*   SSH Access: Exported an SSH public key to the deployed instance, allowing secure, encrypted access while minimizing unauthorized access risks.
+*   Restricted Ports: Opened only the specific ports required by Optimism OP Stack components, reducing the attack surface and ensuring that only essential services are accessible.
+
+### 3. AWS Components:
+
+*   VPC: Deployed within a Virtual Private Cloud (VPC) to isolate and secure network resources.
+*   Security Group: Configured to control inbound and outbound traffic, with rules specifically tailored to OP Stack’s needs.
+*   Subnet and Internet Gateway: Configured for routing and internet access, with a route table linked to the subnet.
+*   EC2 Instance: Launched an instance with the necessary resources and permissions to host the OP Stack demo, applying custom configuration through Terraform.
+
+This deployment strategy combines Terraform’s automation and AWS’s robust infrastructure, creating a scalable, secure, and efficient environment for running Optimism’s OP Stack components on AWS.
+
+For node management, Ansible is used to automate the deployment of all OP Stack components as Docker containers. To enhance security, HAProxy is configured as a reverse proxy, and an iptables firewall is employed to restrict access to only the necessary ports on the node. Key OP Stack components, such as op-geth and op-node's P2P port, are exposed to the internet, while other RPC and WSS services are routed through HAProxy. 
+
+Please find the diagram below outlining the components within the nodes. 
+![alt text](opnode.png)

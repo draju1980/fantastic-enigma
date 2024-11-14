@@ -13,7 +13,7 @@ all:
         #   network: devnet
         #   peerid: null  # or remove this line if peer_id is not defined
         #   node_p2p_priv:   
-        #   sequencer: false
+        #   sequencer: false  
     testnet:
       hosts:
         opstack-demo-node:
