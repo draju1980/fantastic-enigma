@@ -17,7 +17,7 @@ all:
     testnet:
       hosts:
         opstack-demo-node:
-          ansible_host: 54.67.113.218
+          ansible_host: 13.57.24.182
           network: testnet
           peerid: c6be0dff7cdef69a5bdff10abb14e5b1fb242d45d6bf3ff756
           node_p2p_priv: 4ac79fc4449c261bb7168b220fac447b9df6db185f156f95b6f0d11841c94375

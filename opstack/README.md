@@ -39,20 +39,12 @@ To decrypt the testnet environmental variable file,
 use the following Ansible Vault command:
 
 ```sh
-cd opstack
-```
-
-```sh
 ansible-vault decrypt ./opstack/files/testnet/testnet_vault_secrets.yml
 ```
 
 To encrypt the testnet environmental variable file, 
 
 use the following Ansible Vault command:
-
-```sh
-cd deploy-infra/ansible
-```
 
 ```sh
 ansible-vault encrypt ./opstack/files/testnet/testnet_vault_secrets.yml
@@ -73,11 +65,11 @@ Before executing any Ansible tasks, ensure that the vault-key.txt file is placed
 
 Generate Peer ID and Node P2P Private Key:
 
-Use the ./scripts/generate_keys.sh script to generate the keys.
+Use the opstack/files/generate_keys.sh script to generate the keys.
 
 Example:
 ```sh 
-➜  ansible git:main ✗ ./scripts/generate_keys.sh 
+➜  fantastic-enigma git ✗ ./opstack/files/generate_keys.sh
 Choose an option:
 1. Generate OP_NODE_P2P_PRIV and PEER_ID
 2. Generate hostname of length 12

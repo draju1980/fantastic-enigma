@@ -146,3 +146,135 @@ For node management, Ansible is used to automate the deployment of all OP Stack 
 
 Please find the diagram below outlining the components within the nodes. 
 ![alt text](opnode.png)
+
+### How to Deploy an OP Stack Node with All Components
+
+Follow these step-by-step instructions to deploy and configure OP Stack nodes using Terraform and Ansible.
+
+#### 1. Clone the Repository
+Start by cloning the repository:
+```sh
+git clone https://github.com/draju1980/fantastic-enigma.git
+```
+#### 2. Install Terraform
+Make sure Terraform is installed on your local machine. You can verify the installation with:
+```sh
+terraform -version
+```
+
+#### 3. Initialize Terraform
+Navigate to the cloned repository directory and initialize Terraform:
+```sh
+terraform init
+```
+
+#### 4. Preview Changes (Dry Run)
+To review the planned changes before deploying, run:
+
+```sh
+terraform plan
+```
+
+#### 5. Deploy the Infrastructure
+If everything looks good, deploy the instance:
+
+```sh
+terraform apply
+```
+
+Terraform will prompt for confirmation. Type yes and press Enter to confirm. Once deployed, Terraform will display the public IP and SSH command for accessing the instance. 
+Example output:
+```sh
+Apply complete! Resources: 8 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+public_ip = "13.57.24.182"
+ssh_command = "ssh ubuntu@13.57.24.182"
+```
+Your SSH public key will be automatically copied to the new instance, so you can log in using the ubuntu user.
+
+#### 6. Update the Inventory File
+Edit the opstack/inventory/inventory.yml file with the new public IP, network details, peerid, and node_p2p_priv. To generate peerid and node_p2p_priv values, run the script:
+
+```sh
+./opstack/files/generate_keys.sh
+```
+Note: Only one node should be designated as the sequencer in the network. For all other nodes, set the sequencer value to false in the inventory file.
+
+#### 7. Trigger Deployment with GitHub Actions
+After updating inventory.yml, push your changes to the master branch. This will automatically start the GitHub Actions workflow, which uses Ansible to deploy OP Stack components to the remote target node.
+Note: If you are running the Terraform script from your local machine, make sure to update the ANSIBLE_VAULT secret in the repository with the contents of your local ~/.ssh/id_rsa file. This ensures that the GitHub Actions workflow can run the Ansible playbook without errors.
+
+#### 8. Monitor Deployment Progress
+You can view the Ansible tasks running in the GitHub Actions tab here: https://github.com/draju1980/fantastic-enigma/actions
+
+
+### Post-Deployment: Verifying OP Stack Node Components
+Once the GitHub Actions workflow completes, the Ansible job will have installed the following components: op-geth, op-node, op-batcher, op-proposer, HAProxy, firewall, Grafana agent, and other dependencies.
+
+To ensure the node is operating correctly, follow these steps to verify key services. Replace the example public IP 13.57.24.182 with your own, as provided in the Terraform output.
+
+#### 1. Check OP-Geth and OP-Node RPC Endpoints
+Verify that OP-Geth and OP-Node are active by querying their RPC endpoints.
+
+##### OP-Geth Endpoint Verification
+
+Use the following commands to check eth_blockNumber and eth_syncing statuses on OP-Geth:
+
+```sh
+curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' http://13.57.24.182:8545 | jq
+```
+
+Expected Similar Output:
+
+```sh
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": "0x176e"
+}
+```
+```sh
+curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":67}' http://13.57.24.182:8545 | jq
+```
+Expected Output (if synced):
+```sh
+{
+  "jsonrpc": "2.0",
+  "id": 67,
+  "result": false
+}
+```
+
+##### OP-Node Endpoint Verification
+To check the optimism_syncStatus RPC method on OP-Node, run:
+
+```sh
+curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"optimism_syncStatus","params":[],"id":1}' http://13.57.24.182:8547 | jq
+```
+Expected output will include various sync statuses, including current_l1, finalized_l1, safe_l1, finalized_l2, etc., indicating the L1 and L2 sync states of the node.
+
+#### 2. Check Grafana Agent Status
+To verify the Grafana agent is collecting metrics, open the metrics endpoint in a browser at:
+
+```sh
+http://13.57.24.182:12345/graph
+```
+
+This should display Grafana’s scraping interface. Make sure the public IP matches the IP output from your Terraform deployment.
+
+### Important Note: 
+For this challenge, I am using the following addresses for the OP-node, OP-sequencer, OP-batcher, and OP-proposer. However, when setting up your own node, please generate new addresses for all OP Stack components. You can refer to the address generation guide here: [Optimism Address Generation Guide](https://docs.optimism.io/builders/chain-operators/tutorials/create-l2-rollup#generate-addresses).
+
+Admin Account
+GS_ADMIN_ADDRESS: "0x48b142E11a2D2CfCA1C59d5F15b5A040E1b7aDaE"
+
+Batcher Account
+GS_BATCHER_ADDRESS: "0x2667d91d981c680Acac90DEB7853c0a2f8B23d81"
+
+Proposer Account
+GS_PROPOSER_ADDRESS: "0xF2931b3674ce522e79a47a23aCA74a952a05c021"
+
+Sequencer Account
+GS_SEQUENCER_ADDRESS: "0x865A43E94A57Bd3d4A89d729911dF83Ea61e1414"

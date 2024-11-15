@@ -1,5 +1,5 @@
 ---
-# tasks file for inerval-nodes
+# tasks file for ansible jobs
 - name: Install op stack on remote nodes
   hosts: all
   tasks:
